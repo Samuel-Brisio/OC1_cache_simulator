@@ -1,15 +1,20 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
 
 #define N_FIELDS 4
+
+
+using namespace std::chrono;
+using Clock = std::chrono::steady_clock;
 
 struct Cache
 {
     std::vector <u_int16_t> index;
     std::vector <bool> valido;
     std::vector <u_int32_t> endereco;
-    std::vector <int> lru; //least recently used
+    std::vector <steady_clock::time_point> lru; //least recently used
 
 
     // define o tamanho da cache (numero de linhas)
@@ -21,8 +26,8 @@ struct Cache
     } 
 };
 
-int calcula_endereco(u_int32_t arr, u_int16_t offset_size);
-void faz_computacao(Cache &cache,std::ifstream &file);
+int calcula_endereco(u_int32_t addr, u_int16_t offset_size);
+void faz_computacao(Cache &cache,std::ifstream &file,int n_linhas, u_int32_t set_size, int offset) ;
 
 int main() {
 
@@ -47,17 +52,20 @@ int main() {
     std::ifstream file;
     file.open(file_name);
 
+    // Calcula o tamanho do offset
+    int offset = 0;
 
-    faz_computacao(cache, file);
+    faz_computacao(cache, file, row_size, set_size, offset);
 
     return 0;
 }
 
 
-void faz_computacao(Cache &cache,std::ifstream &file,int n_linhas, u_int32_t set_size) {
+void faz_computacao(Cache &cache,std::ifstream &file,int n_linhas, u_int32_t set_size, int offset) {
     u_int32_t addr;
-    u_int16_t offset = 0;
     u_int32_t block_addr;
+
+    // numero de conjuntos que a cache possui
     u_int32_t n_set = n_linhas / set_size;
 
     while(file >> std::hex >> addr) {
@@ -71,6 +79,7 @@ void faz_computacao(Cache &cache,std::ifstream &file,int n_linhas, u_int32_t set
 
             if(cache.valido[index + i] == 0) {
                 cache.endereco[index + i] = addr;
+                cache.lru[index + i] = Clock::now();
                 dado_inserido = true;
                 break;
             }
@@ -78,6 +87,7 @@ void faz_computacao(Cache &cache,std::ifstream &file,int n_linhas, u_int32_t set
 
         // se o bloco ainda não foi inserido na cache
         // É pq o conjunto já está populado
+        // E teremos que substituir o bloco da cache que tem o menor LRU
         if(dado_inserido == false) {
             for (int i = 0; i < set_size; i++) {
                 
@@ -87,6 +97,6 @@ void faz_computacao(Cache &cache,std::ifstream &file,int n_linhas, u_int32_t set
     }
 }
 
-int calcula_endereco(u_int32_t arr, u_int16_t offset_size) {
-    return 0;
+int calcula_endereco(u_int32_t addr, u_int16_t offset_size) {
+    return addr << offset_size;
 }
