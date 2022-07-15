@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/samuelbrisio/Documents/UFMG/Trabalho_OC1/OC1_cache_simulator'
+make: Leaving directory '/home/samuelbrisio/Documents/UFMG/Trabalho_OC1/OC1_cache_simulator'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+
