@@ -94,7 +94,7 @@ void insecao_troca_blocos(Cache &cache,std::ifstream &file, int n_linhas, u_int3
         // se o dado foi inserido com sucesso na cache
         bool dado_inserido = false;
         
-        
+        // se o bloco já está na cache
         for (int i = 0; i < set_size; i++) {
 
             if(cache.valido[index + i] == 1 && cache.endereco[index + i] == tag) {
@@ -106,6 +106,7 @@ void insecao_troca_blocos(Cache &cache,std::ifstream &file, int n_linhas, u_int3
 
         if(!hit) {
 
+            // se o conjunto tem uma linha cujo o bit valido é 0
             for (int i = 0; i < set_size; i++) {
 
                 if(cache.valido[index + i] == 0) {
@@ -121,7 +122,9 @@ void insecao_troca_blocos(Cache &cache,std::ifstream &file, int n_linhas, u_int3
             // É pq o conjunto já está populado
             // E teremos que substituir o bloco da cache que tem o menor LRU
             if(dado_inserido == false) {
+
                 std::vector < std::pair <steady_clock::time_point, int> > LRU;
+                
                 for (int i = 0; i < set_size; i++) {
                     LRU.push_back(std::pair <steady_clock::time_point, int> (
                         cache.lru[index + i],
