@@ -32,10 +32,11 @@ else
 		./$1 $cache_size $row_size $associatividade in > "$1out"
 		./$2 $cache_size $row_size $associatividade in > "$2out2"
 		if (! cmp -s "$1out" "$2out2") then
-			echo "--> parametros:"
-			echo "tamaho da cache :" $cache_size 
-			echo "tamaho da linha :" $row_size 
-			echo "associatividade :" $associatividade 
+			set -o noclobber
+			echo "--> parametros:" > parametros
+			echo "tamaho da cache :" $cache_size >> parametros 
+			echo "tamaho da linha :" $row_size  >> parametros
+			echo "associatividade :" $associatividade >> parametros
 			
 			echo "--> entrada:"
 			cat in
