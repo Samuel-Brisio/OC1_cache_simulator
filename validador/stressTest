@@ -33,7 +33,7 @@ else
 		./$2 $cache_size $row_size $associatividade in > "$2out2"
 		if (! cmp -s "$1out" "$2out2") then
 			set -o noclobber
-			echo "--> parametros:" > parametros
+			echo "--> parametros:" >| parametros
 			echo "tamaho da cache :" $cache_size >> parametros 
 			echo "tamaho da linha :" $row_size  >> parametros
 			echo "associatividade :" $associatividade >> parametros
