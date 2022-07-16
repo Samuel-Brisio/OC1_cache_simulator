@@ -1,0 +1,50 @@
+#!/bin/bash
+if test -z $1 || test ! -f "$1"
+    then echo 'Os dois primeiros parametros devem ser os arquivos C++ (compilado) a comparar saida.'
+elif test -z $2 || test ! -f "$2"
+    then echo 'Os dois primeiros parametros devem ser os arquivos C++ (compilado) a comparar saida.'
+elif test -z $3 || test ! -f $3
+    then echo 'O terceiro parametro deve ser o arquivo C++ (compilado) que gera entrada dado uma seed na linha de comando.'
+else
+    #make $1 $2 $3 || exit 1
+    # a1, a2, gen
+    
+    for ((i = 1; ; i++)) do
+		row_size=$[ $RANDOM % 17 + 3 ]
+	
+		numb_row=$[ $RANDOM % 4 + 1 ]
+		cache_size=$(($numb_row+$row_size))
+		
+		cache_size=$((2 ** $cache_size))
+		row_size=$((2 ** $row_size))
+		way_limit=$num_row
+		associatividade=$((2 ** $[ $RANDOM % $numb_row + 1]))
+		while (($associatividade > $numb_row))
+		do
+			if ((way_limit > 2)) 
+			then
+				way_limit=$(($way_limit--))
+			fi
+			associatividade=$((2 ** $[ $RANDOM % $way_limit + 1]))
+		done
+	
+		./$3 $i > in
+		./$1 $cache_size $row_size $associatividade in > "$1out"
+		./$2 $cache_size $row_size $associatividade in > "$2out2"
+		if (! cmp -s "$1out" "$2out2") then
+			echo "--> parametros:"
+			echo "tamaho da cache :" $cache_size 
+			echo "tamaho da linha :" $row_size 
+			echo "associatividade :" $associatividade 
+			
+			echo "--> entrada:"
+			cat in
+			echo "--> saida1:"
+			cat "$1out"
+			echo "--> saida2:"
+			cat "$2out2"
+			break;
+		fi
+		echo $i
+    done
+fi
