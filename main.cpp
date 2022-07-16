@@ -14,7 +14,7 @@ struct Cache
     std::vector<u_int16_t> index;
     std::vector<bool> valido;
     std::vector<u_int32_t> endereco;
-    std::vector<steady_clock::time_point> lru; // least recently used
+    std::vector<u_int> lru; // least recently used
 
     // define o tamanho da cache (numero de linhas)
     void define_size(uint tamanho)
@@ -78,8 +78,12 @@ void insecao_troca_blocos(Cache &cache, std::ifstream &file, int n_linhas, u_int
     u_int32_t n_set = n_linhas / set_size;
     int num_bits_indentificador = std::ceil(std::log2f(n_set));
 
+    u_int timer = 0;
+
     while (file >> std::hex >> addr)
     {
+        timer++;
+
         block_addr = calcula_endereco(addr, offset);
 
         int index = block_addr % n_set;
@@ -99,7 +103,7 @@ void insecao_troca_blocos(Cache &cache, std::ifstream &file, int n_linhas, u_int
 
             if (cache.valido[index + i] == 1 && cache.endereco[index + i] == tag)
             {
-                cache.lru[index + i] = Clock::now();
+                cache.lru[index + i] = timer;
                 hit = true;
                 break;
             }
@@ -115,7 +119,7 @@ void insecao_troca_blocos(Cache &cache, std::ifstream &file, int n_linhas, u_int
                 if (cache.valido[index + i] == 0)
                 {
                     cache.endereco[index + i] = tag;
-                    cache.lru[index + i] = Clock::now();
+                    cache.lru[index + i] = timer;
                     cache.valido[index + i] = true;
                     dado_inserido = true;
                     break;
@@ -128,20 +132,20 @@ void insecao_troca_blocos(Cache &cache, std::ifstream &file, int n_linhas, u_int
             if (dado_inserido == false)
             {
 
-                std::vector<std::pair<steady_clock::time_point, int>> LRU;
+                std::vector<std::pair<u_int, int>> LRU;
 
                 for (int i = 0; i < set_size; i++)
                 {
-                    LRU.push_back(std::pair<steady_clock::time_point, int>(
+                    LRU.push_back(std::pair<u_int, int>(
                         cache.lru[index + i],
                         i));
                 }
 
                 // Encontra o bloco mais antigo
-                std::pair<steady_clock::time_point, int> last_block = *(std::min_element(LRU.begin(), LRU.end()));
+                std::pair<u_int, int> last_block = *(std::min_element(LRU.begin(), LRU.end()));
 
                 cache.endereco[index + last_block.second] = tag;
-                cache.lru[index + last_block.second] = Clock::now();
+                cache.lru[index + last_block.second] = timer;
             }
         }
 
