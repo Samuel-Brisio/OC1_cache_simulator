@@ -6,7 +6,7 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/main",
-        "args": ["4096", "1024", "4", "test.txt"],
+        "args": ["8388608", "524288", "2", "test.txt"],
         "environment": [{ "name": "config", "value": "Debug" }],
         "cwd": "${workspaceFolder}"
         }

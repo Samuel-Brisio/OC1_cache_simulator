@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     std::srand(std::stoi(argv[1]));
 
-    for (int i = 0; i < std::rand() % 1000 + 1; i++)
+    for (int i = 0; i < std::rand() % 10000 + 1; i++)
     {
         int x = std::rand() % INT32_MAX;
         std::cout << "0x" << std::hex << std::setfill('0') << std::setw(8) << std::uppercase << x << std::endl;

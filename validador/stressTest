@@ -12,7 +12,7 @@ else
     for ((i = 1; ; i++)) do
 		row_size=$[ $RANDOM % 17 + 3 ]
 	
-		numb_row=$[ $RANDOM % 4 + 1 ]
+		numb_row=$[ $RANDOM % 8 + 1 ]
 		cache_size=$(($numb_row+$row_size))
 		
 		cache_size=$((2 ** $cache_size))
